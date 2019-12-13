@@ -1,0 +1,1 @@
+FOR /L %i IN (1,1,40) DO ping -n 1 10.0.1.%i | FIND /i "Reply"
