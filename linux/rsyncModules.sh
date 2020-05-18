@@ -14,10 +14,10 @@ rsyncModule() {
     echo "--------Copy from: $3 ---to---- $4 -----" >> $LOG_FILE
     rsync --log-file=$LOG_FILE \
         --password-file=$RSYNC_SECRET \
-        --exlude $EXCLUDE_LIST \
+        --exclude $EXCLUDE_LIST \
         $RSYNC_OPTIONS $1@$2::$3 $4
     if [ $? -ne 0 ]; then
-        echo "Failed to copy from: $3 to $4"
+        echo "Failed to copy from: $3 to $4" >> $LOG_FILE
         exit 1
     fi
 }
