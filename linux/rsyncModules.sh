@@ -8,13 +8,13 @@
 #sudo smartctl -d sat -x /dev/sda1
 #sudo smartctl -d sat -i /dev/sda1
 
-#rsync --password-file=/home/rock/local/mybackup.txt -avz --exclude ".recycle" mybackup@10.0.1.101::Shared /media/backup/Shared/
+#rsync --password-file=/home/rock/local/mybackup.txt -avz --exclude ".recycle" mybackup@10.0.1.101::PabloStorage /media/backup/PabloStorage/
 
 rsyncModule() {
-    echo "--------Copy from: $3 ---to---- $4 -----" >> $LOG_FILE
-    rsync --log-file=$LOG_FILE \
-        --password-file=$RSYNC_SECRET \
-        --exclude $EXCLUDE_LIST \
+    echo "--------Copy from: $3 ---to---- $4 -----" >> "$LOG_FILE"
+    rsync --log-file="$LOG_FILE" \
+        --password-file="$RSYNC_SECRET" \
+        --exclude "$EXCLUDE_LIST" \
         $RSYNC_OPTIONS $1@$2::$3 $4
     if [ $? -ne 0 ]; then
         echo "Failed to copy from: $3 to $4" >> $LOG_FILE
