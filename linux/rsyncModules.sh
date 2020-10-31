@@ -11,13 +11,13 @@
 #rsync --password-file=/home/rock/local/mybackup.txt -avz --exclude ".recycle" mybackup@10.0.1.101::PabloStorage /media/backup/PabloStorage/
 
 rsyncModule() {
-    echo "--------Copy from: $3 ---to---- $4 -----" >> "$LOG_FILE"
+    echo "--------rsync from: $3 ---to---- $4 -----"
     rsync --log-file="$LOG_FILE" \
         --password-file="$RSYNC_SECRET" \
         --exclude "$EXCLUDE_LIST" \
         $RSYNC_OPTIONS $1@$2::$3 $4
     if [ $? -ne 0 ]; then
-        echo "Failed to copy from: $3 to $4" >> $LOG_FILE
+        echo "Failed to rsync from: $3 to $4"
         exit 1
     fi
 }
@@ -30,8 +30,10 @@ help(){
 
 LOG_FILE=/var/log/rsync.log
 RSYNC_OPTIONS="-avz"
-RSYNC_SECRET="/home/rock/local/mybackup.txt"
+RSYNC_SECRET="/root/local/mybackup.txt"
 EXCLUDE_LIST=".recycle"
+DEVICE="/dev/sda1"
+MNT_PNT="/media/backup"
 
 if [ -z "$RSYNC_SECRET" ]
 then
@@ -40,9 +42,25 @@ then
       exit 1
 fi
 
-echo "------------Starting new copy-------------" >> $LOG_FILE
+#Check for mounted disk
+findmnt "$DEVICE"
+if [ $? -ne 0 ]; then
+    echo "Device $DEVICE is mounted"
+else
+    echo "Mounting device $DEVICE"
+    mount -t ext4 -o defaults "$DEVICE" "$MNT_PNT"
+    if [ $? -ne 0 ]; then
+        echo "Cannot mount device $DEVICE into $MNT_PNT"
+        exit 1
+    fi
+fi
+
+echo "------------Starting new rsync process-------------"
 rsyncModule mybackup 10.0.1.101 Shared /media/backup/Shared/
 rsyncModule mybackup 10.0.1.101 FlorenciaStorage /media/backup/FlorenciaStorage/
 rsyncModule mybackup 10.0.1.101 PabloStorage /media/backup/PabloStorage/
 rsyncModule mybackup 10.0.1.101 Public /media/backup/Public/
-echo "------------Finished succesfully-------------" >> $LOG_FILE
+echo "------------Finished rsync succesfully-------------"
+
+echo "Unmounting device $DEVICE"
+umount "$DEVICE"
