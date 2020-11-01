@@ -44,7 +44,7 @@ fi
 
 #Check for mounted disk
 findmnt "$DEVICE"
-if [ $? -ne 0 ]; then
+if [ $? -eq 0 ]; then
     echo "Device $DEVICE is mounted"
 else
     echo "Mounting device $DEVICE"
