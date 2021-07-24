@@ -56,6 +56,8 @@ else
 fi
 
 echo "------------Starting new rsync process-------------"
+
+#rsyncModule [username] [hostname] [moduleName] [Destination]
 rsyncModule mybackup 10.0.1.101 Shared /media/backup/Shared/
 rsyncModule mybackup 10.0.1.101 FlorenciaStorage /media/backup/FlorenciaStorage/
 rsyncModule mybackup 10.0.1.101 PabloStorage /media/backup/PabloStorage/
