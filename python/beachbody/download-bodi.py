@@ -16,6 +16,8 @@ def startParsing(jsonObj):
         meta_box = item['meta_box']
         subNav = meta_box['subNav']
         for item2 in subNav:
+            print('Video group', item2['title'])
+            # TODO change logic to if it has "videos" but avoid repeated items
             if item2['title'] == 'Workouts':
                 videoGroups = item2['videoGroups']
                 parseVideoGroups(videoGroups)
@@ -112,7 +114,8 @@ def loadJson():
     with open(INPUT_FILE, "r") as my_file:
         jsonObj = json.load(my_file)
         startParsing(jsonObj)
-
+    print("Finished!")
+    
 
 def main():
     # total arguments
