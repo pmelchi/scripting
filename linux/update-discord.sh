@@ -11,6 +11,7 @@
 # TODO Check if wget or curl is a better option
 # TODO Use timestamp to avoid downloading again the same file
 # TODO create a temp folder as an option 
+# TODO can we run it as a script before starting discord?
 
 discord_file="/tmp/discord.tar.gz"
 install_path="/usr/share/discord"
