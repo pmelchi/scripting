@@ -3,24 +3,12 @@ import json
 import youtube_dl
 import os
 import requests
-import re
 import sys
 
 CLOUDFRONT_URL = 'https://d197pzlrcwv1zr.cloudfront.net/'
 BASE_FOLDER = './'
 INPUT_FILE = './program.json'
 
-
-def getVideoFileName(dl_entity):
-    name = dl_entity['slug']
-    # new_name = name.replace('&', 'and')
-    # new_name = re.sub(r'\W', '_', new_name)
-
-    # while os.path.exists(new_name):
-    #     new_name = new_name + ""
-
-
-    return name
 
 def download(url: str, file_path: str):
     if os.path.exists(file_path) :
@@ -61,8 +49,8 @@ def downloadResource(dl_entity, folderName):
   print('Download ', url,'to', file_path)
   download(url, file_path)
 
+# FIXME add folder name
 def downloadWorkout(entity):
-    # base_url = 'https://d197pzlrcwv1zr.cloudfront.net/'
     video = entity['video']
     videoId = video['videoId']
     fullURL = CLOUDFRONT_URL + videoId + '/' + videoId + '_Main_B.m3u8'

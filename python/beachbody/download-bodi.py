@@ -4,6 +4,7 @@ import os
 import requests
 import youtube_dl
 import sys
+from datetime import datetime
 
 CLOUDFRONT_URL = 'https://d197pzlrcwv1zr.cloudfront.net/'
 BASE_FOLDER = './'
@@ -108,12 +109,19 @@ def downloadVideo(url: str, filename: str):
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
+def printCurrentTime():
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print("Current Time =", current_time)
+
 def loadJson():
     print('Using JSON: ' + INPUT_FILE, 'output folder: ', BASE_FOLDER)
+    printCurrentTime()
     createFolder(BASE_FOLDER)
     with open(INPUT_FILE, "r") as my_file:
         jsonObj = json.load(my_file)
         startParsing(jsonObj)
+    printCurrentTime()
     print("Finished!")
     
 
