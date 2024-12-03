@@ -1,6 +1,30 @@
 import os
 from pypdf import PdfReader
 
+parts = []
+print_next = 0
+
+visitors = ["visitor_page_start"]
+
+# This visitor looks for the start of the transaction details
+def visitor_page_start(text, cm, tm, font_dict, font_size):
+    global parts
+    global print_next
+
+    if print_next > 0:
+        print (text)
+        print (cm)
+        print (tm)
+        parts.append(text)
+        print_next -= 1
+
+    if text == "Detalle de Movimientos Realizados":
+        print (text)
+        print (cm)
+        print(tm)
+        print_next = 2
+
+
 # This function opens a PDF file with password and walks through all pages
 def open_encrypted_pdf(file_path: str, password: str) -> PdfReader:
     """
@@ -20,7 +44,6 @@ def open_encrypted_pdf(file_path: str, password: str) -> PdfReader:
         reader = PdfReader(file_path)
         
         if reader.is_encrypted:
-            print("PDF is encrypted")
             try:
                 reader.decrypt(password)
             except Exception as e:
@@ -51,10 +74,14 @@ def convert_pdf_to_csv(pdf_file, password):
 
     # Open the PDF file
     pdf_reader = open_encrypted_pdf(pdf_file, password)
-
+      
     # Print all text from the PDF
     for page in pdf_reader.pages:
-        print(page.extract_text())
+        page.extract_text(visitor_text=visitor_page_start)
+
+    text_body = "".join(parts)
+
+    print(text_body)
 
 # This functions takes a path and looks for all PDF files in it, then calls the convert_pdf_to_csv function
 def convert_all_pdfs_to_csv(path, password):
@@ -79,7 +106,6 @@ def convert_all_pdfs_to_csv(path, password):
             convert_pdf_to_csv(os.path.join(path, file), password) 
 
 def main():
-    convert_all_pdfs_to_csv("C:/temp", "password")
 
 if __name__ == "__main__":
     main()
