@@ -6,7 +6,7 @@ import csv
 
 # Write transactions to a CSV file
 def write_transactions_to_csv(transactions, output_file):
-    csv_headers = ["oper","liq","description","reference","cargos","abonos"]
+    csv_headers = ["oper","liq","description","cargos","abonos", "saldo"]
 
     with open(output_file, 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=csv_headers)
@@ -30,21 +30,31 @@ def parse_text_to_array(text):
     
     # Parse individual transactions
     transactions = []
+    count = 0
     for line in transactions_text.split('\n'):
-        match = re.search(r"(\d{2}/\d{2}/\d{4})\s+(.*?)\s+([-]?\d+\.\d{2})", line)
+        match = re.search(r"(\d{2}\/\w{3})(\s*\d{2}\/\w{3})(\s*[^\d]*)(\s*[\d.,]+)(\s*[\d.,]*)(\s*[\d.,]*)", line)
         if match:
-            print("match")
-            oper, liq, description, reference, cargos, abonos = match.groups()
+            if count < 10:
+                print(match.groups())
+                count+=1
+            oper, liq, description, cargos, abonos, saldo = match.groups()
             transactions.append({
                 'oper': oper,
                 'liq': liq,
                 'description': description,
-                'reference': reference,
-                'cargos': float(cargos),
-                'abonos': float(abonos)
+                'cargos': convert_to_float_or_empty(cargos),
+                'abonos': convert_to_float_or_empty(abonos),
+                'saldo': convert_to_float_or_empty(saldo)
             })
     
     return transactions
+
+def convert_to_float_or_empty(value):
+    value = value.replace(",", "")
+    try:
+        return float(value)
+    except ValueError:
+        return ""
 
 
 # This function opens a PDF file with password and walks through all pages
