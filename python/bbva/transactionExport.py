@@ -8,7 +8,7 @@ import csv
 def write_transactions_to_csv(transactions, output_file):
     csv_headers = ["oper","liq","description","cargos","abonos", "saldo"]
 
-    with open(output_file, 'w', newline='') as f:
+    with open(output_file, 'a', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=csv_headers)
         writer.writeheader()
         for transaction in transactions:
