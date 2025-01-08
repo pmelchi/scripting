@@ -6,18 +6,20 @@ import csv
 
 # Write transactions to a CSV file
 def write_transactions_to_csv(transactions, output_file):
-    csv_headers = ["oper","liq","description","cargos","abonos", "saldo"]
+    csv_headers = ["oper","liq","description","cargos","abonos", "saldo", "filename"]
 
+    file_exists = os.path.isfile(output_file)
     with open(output_file, 'a', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=csv_headers)
-        writer.writeheader()
+        if not file_exists:
+            writer.writeheader()
         for transaction in transactions:
             writer.writerow(transaction)
     
     print(f"Transactions written to {output_file}")
 
 # Function that looks at the text in the text_array and starts extracting the transaction details to a CSV file
-def parse_text_to_array(text):
+def parse_text_to_array(text, pdf_file):
     # Identify the transactions section
     transactions_start = re.search(r"Detalle de Movimientos Realizados", text)
     transactions_end = re.search(r"Total de Movimientos", text)
@@ -44,7 +46,8 @@ def parse_text_to_array(text):
                 'description': description,
                 'cargos': convert_to_float_or_empty(cargos),
                 'abonos': convert_to_float_or_empty(abonos),
-                'saldo': convert_to_float_or_empty(saldo)
+                'saldo': convert_to_float_or_empty(saldo),
+                'filename': os.path.basename(pdf_file)
             })
     
     return transactions
@@ -112,7 +115,7 @@ def convert_pdf_to_text(pdf_file, password, output_file):
     for page in pdf_reader.pages:
         text_body+=page.extract_text()
 
-    transactions = parse_text_to_array(text_body)
+    transactions = parse_text_to_array(text_body, pdf_file)
     write_transactions_to_csv(transactions, output_file)
     
 
